@@ -62,33 +62,40 @@ void Board::print(){
     }
     cout << "liczba kolorów: " << r << endl << "maksymalne długosci ciągów: " << k << endl;
     cout << "plansza: " << board<< endl;
-
 }
 
-//Zwraca true jeżeli znaleziony został ciąg długości k_i dla i-tego koloru
+//Zwraca true jeżeli znaleziony został ciąg długości k_i dla i-tego koloru.
+//Po odkomentowaniu można lepiej prześledzić działanie algorytmu.
+//TODO: Można to zrobić szybciej.
 bool Board::check_sequence(){
     int val,prev_val,counter;
     for(int progression = 1; progression < board.size(); progression++){
+        //cout << "Postęp arytmetyczny: " << progression << endl;
+        for(int i = 0; i < progression; i++){
+            //cout << "Zliczanie rozpoczęło się od elementu na " << i << "-pozycji."<<endl;
             counter = 1;
-        for(int i = 0; i <= progression; i++){
-        prev_val = board[i];
-            for(int pos = progression + i; pos < board.size(); pos+=progression){
-                val = board[pos];
-                if(val == prev_val){
-                    counter++;
-                }else{
-                    counter = 1;
+            prev_val = board[i];
+                for(int pos = progression + i; pos < board.size(); pos+=progression){
+                    val = board[pos];
+                    //cout << "Wykonało się dla pozycji: " << pos<<" Porównało " << prev_val << " z " << val << " ";
+                    if(val == prev_val){
+                        counter++;
+                        //cout << "I zwiększył licznik. Teraz count wynosi: " <<counter << endl;
+                    }else{
+                        //cout << "I nie zwiększył licznika. licznik wrócił do wartości 1."<<endl;
+                        counter = 1;
+                    }
+                    if(k[val-1] == counter){
+                        found_val = val;
+                        found_prog = progression;
+                        comp_win = true;
+                        return true;
+                    }
+                    prev_val = val;
                 }
-                if(k[val-1] <= counter){
-                    found_val = val;
-                    found_prog = progression;
-                    comp_win = true;
-                    return true;
-                }
-                prev_val = val;
+            if(progression + i == board.size()-1){ break;} // żeby nie wykonywać zbędnych obliczeń
             }
         }
-    }
     return false;
 }
 
