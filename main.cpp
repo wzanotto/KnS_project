@@ -62,6 +62,7 @@ void Board::print(){
     }
     cout << "liczba kolorów: " << r << endl << "maksymalne długosci ciągów: " << k << endl;
     cout << "plansza: " << board<< endl;
+
 }
 
 //Zwraca true jeżeli znaleziony został ciąg długości k_i dla i-tego koloru.
@@ -101,7 +102,7 @@ bool Board::check_sequence(){
 
 //Zwraca true jeżeli zachodzi jeden z warunków konća rozgrywki
 bool Board::is_running(){
-    if (board.size() >= n || check_sequence()){
+    if (check_sequence() || board.size() >= n){
         return false;
     }else {
         return true;
