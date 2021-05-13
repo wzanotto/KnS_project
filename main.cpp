@@ -48,7 +48,7 @@ Board::Board()
     int c;
     cin >> c;
     board.push_back(c);
-    if(count_2 + count_3 == r){is_algorythm3 = true; cout<<"we will use the third algorythm!"<<endl;}
+    if(count_2 + count_3 == r && count_3 == 1){is_algorythm3 = true; cout<<"we will use the third algorythm!"<<endl;}
 }
 //Przeciążony operator << do wyświetlania tablicy
 template < class T >
