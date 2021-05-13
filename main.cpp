@@ -13,6 +13,7 @@ class Board
 		int found_val,found_prog;
 		int last_elem = 0;
 		bool comp_win = false;
+		bool is_algorythm3 = false;
     public:
         Board();
         virtual ~Board();
@@ -20,6 +21,8 @@ class Board
     	void print();
     	bool check_sequence();
     	bool is_running();
+        int algorythm1();
+    	int algorythm3();
     	int request_algorythm();
     	int request();
     	void insert_coin(int position);
@@ -28,12 +31,16 @@ class Board
 //Konstruktor - rozpoczęcie rozgrywki
 Board::Board()
 {
+    int count_2 = 0;
+    int count_3 = 0;
     cout << "Podaj liczbę dopuszczalnych kolorów" <<endl;
     cin >> r;
     cout << "Podaj maksymalne długości ciągów o i-tym kolorze" <<endl;
     k.resize(r);
     for(int i = 0; i < r; i++){
         cin >> k[i];
+        if(k[i] == 2){count_2++;}
+        if(k[i] == 3){count_3++;}
     }
     cout << "Podaj maksymalną liczbę żetonów, które mogą zostać ułożone w linii" << endl;
     cin >> n;
@@ -41,6 +48,7 @@ Board::Board()
     int c;
     cin >> c;
     board.push_back(c);
+    if(count_2 + count_3 == r){is_algorythm3 = true; cout<<"we will use the third algorythm!"<<endl;}
 }
 //Przeciążony operator << do wyświetlania tablicy
 template < class T >
@@ -98,7 +106,7 @@ bool Board::check_sequence(){
             prev_val = board[i];
                 for(int pos = progression + i; pos < board.size(); pos+=progression){
                     val = board[pos];
-                    //cout << "Wykonało się dla pozycji: " << pos<<" Porównało " << prev_val << " z " << val << " ";
+                    //cout << "Wykonało się dla poszycji: " << pos<<" Porównało " << prev_val << " z " << val << " ";
                     if(val == prev_val){
                         counter++;
                         //cout << "I zwiększył licznik. Teraz count wynosi: " <<counter << endl;
@@ -130,8 +138,34 @@ bool Board::is_running(){
     }
 }
 
+int Board::algorythm1(){
+    for(int i = 0; i < board.size()-1; i++){
+        if(board[i] != board[i+1]){
+            return i+1;
+        }
+    }
+    return board.size();
+}
+
+int Board::algorythm3(){
+    int j_color = 0;
+    for(int i = 0; i < k.size(); i++){
+        if(k[i] == 3){
+            j_color = i;
+            break;
+        }
+    }
+    for(int i = 0; i < board.size(); i++){
+        if(board[i] - 1 == j_color){
+            return i;
+        }
+    }
+    return board.size();
+}
 //TODO: Algorytm znajdujący optymalny ruch komputera. (póki co ruch komputera jest losowy)
 int Board::request_algorythm(){
+    if(r == 2) return algorythm1();
+    if(is_algorythm3) return algorythm3();
     srand( (unsigned)time(NULL) );
     return rand() % board.size();
 }
