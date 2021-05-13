@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -10,10 +11,12 @@ class Board
 		vector <int> k;
 		vector <int> board;
 		int found_val,found_prog;
+		int last_elem = 0;
 		bool comp_win = false;
     public:
         Board();
         virtual ~Board();
+        void display(const std::vector<int>& v);
     	void print();
     	bool check_sequence();
     	bool is_running();
@@ -39,7 +42,6 @@ Board::Board()
     cin >> c;
     board.push_back(c);
 }
-
 //Przeciążony operator << do wyświetlania tablicy
 template < class T >
 std::ostream& operator << (std::ostream& os, const std::vector<T>& v)
@@ -49,6 +51,26 @@ std::ostream& operator << (std::ostream& os, const std::vector<T>& v)
         os << *ii << " ";
     }
     return os;
+}
+
+//Kolorowanie tablicy
+void Board :: display(const std::vector<int>& v)
+{
+    int seq_length = (k[found_val-1]-1)*found_prog;
+    int seq_start = last_elem - seq_length;
+    for(int i = 0; i < seq_start;i++){
+        cout << v[i] << " ";
+    }
+     for(int i = 0; i <= seq_length; i++){
+            if(i % found_prog == 0){
+                printf("\033[1;47;35m%d\033[0m ",v[i+seq_start]);
+            }else{
+                cout << v[i+seq_start] << " ";
+            }
+    }
+    for(int i = last_elem + 1; i < v.size(); i++){
+        cout << v[i] << " ";
+    }
 }
 
 //Wyświetlanie podsumowania rozgrywki
@@ -61,13 +83,11 @@ void Board::print(){
         cout << "Wygrałeś. Długość ciągu osiągnełeła maksymalną wartość (" << n << ")"<<endl;
     }
     cout << "liczba kolorów: " << r << endl << "maksymalne długosci ciągów: " << k << endl;
-    cout << "plansza: " << board<< endl;
-
+    cout << "plansza: ";display(board);cout<< endl;
 }
 
 //Zwraca true jeżeli znaleziony został ciąg długości k_i dla i-tego koloru.
 //Po odkomentowaniu można lepiej prześledzić działanie algorytmu.
-//TODO: Można to zrobić szybciej.
 bool Board::check_sequence(){
     int val,prev_val,counter;
     for(int progression = 1; progression < board.size(); progression++){
@@ -89,6 +109,7 @@ bool Board::check_sequence(){
                     if(k[val-1] == counter){
                         found_val = val;
                         found_prog = progression;
+                        last_elem = pos;
                         comp_win = true;
                         return true;
                     }
