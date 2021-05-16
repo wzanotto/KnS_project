@@ -14,6 +14,7 @@ class Board
 		int last_elem = 0;
 		bool comp_win = false;
 		bool is_algorythm3 = false;
+		bool is_algorythm4 = false;
     public:
         Board();
         virtual ~Board();
@@ -23,6 +24,7 @@ class Board
     	bool is_running();
         int algorythm1();
     	int algorythm3();
+	int algorythm4();
     	int request_algorythm();
     	int request();
     	void insert_coin(int position);
@@ -48,7 +50,8 @@ Board::Board()
     int c;
     cin >> c;
     board.push_back(c);
-    if(count_2 + count_3 == r && count_3 == 1){is_algorythm3 = true; cout<<"we will use the third algorythm!"<<endl;}
+    if(count_2 + count_3 == r && count_3 == 1&&n>=r+2){is_algorythm3 = true; cout<<"we will use the third algorythm!"<<endl;}
+	if(count_2 + count_3 == r && count_3 == 2&&n>=r+4){is_algorythm4 = true; cout<<"we will use the fourth algorythm!"<<endl;}
 }
 //Przeciążony operator << do wyświetlania tablicy
 template < class T >
@@ -162,10 +165,93 @@ int Board::algorythm3(){
     }
     return board.size();
 }
+
+int Board::algorythm4() {
+	int j_color = 0;
+	int l_color = k.size() + 1;
+	int suma_j = 0;
+	int suma_l = 0;
+	int koniec_l = 0;
+	int koniec_j = 0;
+	for (int i = 0; i < k.size(); i++) {
+		if (k[i] == 3) {
+			if (j_color == l_color)
+			{
+				l_color = i;
+				break;
+			}
+			j_color = i;
+			l_color = i;
+		}
+	}
+	for (int i = 0; i < board.size(); i++) {
+		if (board[i] - 1 == j_color) {
+			koniec_j = i;
+			suma_j++;
+		}
+		else if (board[i] - 1 == l_color) {
+			koniec_l = i;
+			suma_l++;
+		}
+	}
+	if (suma_l + suma_j < 3)
+		return board.size() - (suma_l + suma_j);
+
+	if (suma_l + suma_j == 3)
+	{
+		if (suma_l == 2)
+		{
+			if (board[koniec_l] == board[koniec_l - 1])
+				return (koniec_l > koniec_j) ? koniec_j : koniec_j + 1;
+			return koniec_j - 1;
+		}
+		if (board[koniec_j] == board[koniec_j - 1])
+			return (koniec_j > koniec_l) ? koniec_l : koniec_l + 1;
+		return koniec_l - 1;
+	}
+
+	if (suma_l + suma_j == 4)
+	{
+		if (suma_l == 2)
+		{
+			if (board[koniec_l] == board[koniec_l - 1])
+			{
+				return (koniec_j < koniec_l) ? koniec_j - 1 : koniec_l - 1;
+			}
+			return(koniec_j < koniec_l) ? koniec_j - 2 : koniec_l - 2;
+
+		}
+		if (suma_l == 1)
+		{
+			return(koniec_j - koniec_l == 1) ? koniec_l - 1 : koniec_j;
+		}
+
+		return(koniec_l - koniec_j == 1) ? koniec_j - 1 : koniec_l;
+	}
+	if (suma_j + suma_l > 4)
+	{
+		if ((koniec_j - 1 == koniec_l || koniec_l - 1 == koniec_j) && suma_j + suma_l == 5) {
+			return (koniec_j < koniec_l) ? koniec_j - 2 : koniec_l - 2;
+		}
+		if (board.size() < r + 3)
+		{
+			return	(koniec_j < koniec_l) ? koniec_l : koniec_j;
+		}
+			
+		if (board[board.size() - 1] == board[board.size() - 2])
+		{
+			return(koniec_j < koniec_l) ? koniec_j : koniec_l;
+		}
+		return board.size() - 1;
+	}
+}
+
+
 //TODO: Algorytm znajdujący optymalny ruch komputera. (póki co ruch komputera jest losowy)
 int Board::request_algorythm(){
     if(r == 2) return algorythm1();
     if(is_algorythm3) return algorythm3();
+	if(is_algorythm4) return algorythm4();
     srand( (unsigned)time(NULL) );
     return rand() % board.size();
 }
