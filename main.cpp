@@ -237,8 +237,8 @@ int Board::algorythm4() {
 		{
 			return	(koniec_j < koniec_l) ? koniec_l : koniec_j;
 		}
-			
-		if (board[koniec_j]==board[koniec_j-1])&&board[koniec_l]==board[koniec_l-1])
+
+		if ((board[koniec_j]==board[koniec_j-1])&&board[koniec_l]==board[koniec_l-1])
 		{
 			return(koniec_j < koniec_l) ? koniec_j : koniec_l;
 		}
